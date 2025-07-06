@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FRIDAY Voice Agent</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: #1a1a1a; /* Charcoal grey */
+      color: white;
+      height: 100%;
+      overflow: hidden;
+      font-family: system-ui, sans-serif;
+    }
+    elevenlabs-convai {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <elevenlabs-convai
+    agent-id="agent_01jyez28ecfttt78cdcgf8rk8m"
+    enable-reset="false"
+    style="width: 100%; height: 100%;"
+  ></elevenlabs-convai>
+
+  <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
+
+  <script>
+    window.addEventListener('load', () => {
+      console.log("🌐 Page loaded. Watching for Friday AI button in Shadow DOM...");
+
+      const hostSelector = 'elevenlabs-convai';
+
+      const waitForButtons = (timeout = 20000) => {
+        return new Promise((resolve, reject) => {
+          const timer = setTimeout(() => {
+            observer.disconnect();
+            reject(new Error("Buttons not found in shadow root."));
+          }, timeout);
+
+          const observer = new MutationObserver(() => {
+            const shadow = document.querySelector(hostSelector)?.shadowRoot;
+            const buttons = shadow?.querySelectorAll("button");
+            if (buttons?.length >= 2) {
+              clearTimeout(timer);
+              observer.disconnect();
+              resolve(buttons);
+            }
+          });
+
+          observer.observe(document.body, { childList: true, subtree: true });
+        });
+      };
+
+      waitForButtons()
+        .then(buttons => {
+          console.log("✅ First button found. Clicking...");
+          buttons[0].click();
+
+          setTimeout(() => {
+            console.log("✅ Second button found. Clicking...");
+            buttons[1]?.click();
+          }, 1000);
+        })
+        .catch(err => {
+          console.warn("❌ Auto-click failed: ", err.message);
+        });
+    });
+  </script>
+</body>
+</html>
